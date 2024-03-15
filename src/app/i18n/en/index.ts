@@ -12,7 +12,12 @@ export const en_US = {
     'MESSAGE':'Message',
     'FREQUENCY':'Frequency',
     'DOCUMENT':'Document',
-    
+    'SEND_MAIL':'Send mail',
+    'REPEATE_REMINDER':'Repeate reminder',
+    'USERS':'Users',
+    'REMINDER_DATE':'Reminder date',
+    'REMINDER_END_DATE':'Reminder end date',
+    'SELECT_QUARTER_DATE':'Select quarter date',
     'ERROR_SERVER':'Something went wrong, please try again.',
     'PASSWORD_UPDATE':'Password updated successfully.',
     'DATETIME':'Date & Time',
@@ -45,8 +50,8 @@ export const en_US = {
     'USER_NAME':"Username",
     'FROM_NAME':'From',
     'IS_DEFAULT':'Is default',
-
-
+    'TEAM':'Team',
+    'DOWNLOAD':'Download file',
     'CONFIRM_PASSWORD':"Confirm password",
     'PASSWORD_MATCH':'Password not matching',
     'FIRSTNAME':"First name",
@@ -63,6 +68,7 @@ export const en_US = {
     'Name':'Name',
     'Category':'Category', 
     'Loading...':'Loading...', 
+    'CHAT':'Chat',
     'Sub-category':'Sub-category',
     'Add new':'Add new', 
     'Description':'Description',

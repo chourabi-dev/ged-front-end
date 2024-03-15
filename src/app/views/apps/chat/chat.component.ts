@@ -3,6 +3,7 @@ import { ChatService } from './chat.service'
 import { Chat } from './chat.interface'
 import { WildcardSearch } from '@app/shared/utils/WildcardSearch';
 import { NumberFormatStyle } from '@angular/common';
+import { ApiService } from '@app/api.service';
 
 @Component({
     selector: 'chat',
@@ -13,46 +14,140 @@ export class ChatComponent implements OnInit {
     temp: Chat[]
     chatList: Chat[]
     selectedId: string | NumberFormatStyle
-    mobilePanelOpen: boolean
+    mobilePanelOpen: boolean = true;
+
+
+
+    conversations =[];
     
-    constructor(private chatSvc: ChatService, private cdr: ChangeDetectorRef) {
-        this.fetch()
+    tmpConversations =[];
+    
+
+    contactID;
+
+    
+    constructor(private chatSvc: ChatService, private cdr: ChangeDetectorRef,private api:ApiService) {
+      
     }
 
-    ngOnInit(): void { }
+    ngOnInit(): void { 
+        this.getConverstations();
+    }
 
-    fetch(id = '1') {
-        this.chatSvc.getChatList().subscribe(res => {
-            this.chatList = res
-            this.temp = res
-            this.chatList.forEach(elm => {
-                if(elm.id === id) {
-                    this.selectedId = elm.id
-                }
-            });
-            this.cdr.detectChanges()
+
+
+    getConverstations(){
+        this.api.getListOfConversations().toPromise().then((res:any)=>{
+            console.log(res);
+
+            this.conversations = res.conversations;
+            this.tmpConversations = res.conversations;
+            
+
+            this.cdr.detectChanges();
+            
         })
     }
 
-    selectChat(id: string) {
-        this.selectedId = id
-        this.mobilePanelOpen = false
+
+
+    fetch(id = '1') {
+         
     }
 
-    updateChat(id) {
-        this.fetch(id)
+    selectChat(id: string, uid=null) {
+        this.selectedId = null;
+        this.contactID=null;
+
+
+        this.cdr.detectChanges();
+        this.selectedId = id
+        this.contactID = uid;
+
+        this.mobilePanelOpen = false
+
+        this.cdr.detectChanges();
+
+
     }
+ 
+
+
+    receiveMessage(message: string) {
+        console.log(message);
+        this.getConverstations();
+
+
+        
+      }
+
 
     serach(e) {
         const searchValue = e.target.value
+        
         if(searchValue) {
-            this.chatList = WildcardSearch(this.temp, searchValue)
+            this.conversations = this.conversations.filter((c)=>  ( c.users[0].firstName+' '+c.users[0].lastName  ) .toLowerCase().indexOf( searchValue.toLowerCase() ) != -1 )
         } else {
-           this.chatList = this.temp
+           this.conversations  = this.tmpConversations;
         }
     }
 
     onMobilePanelToggleOpen() {
         this.mobilePanelOpen = true
     }
+
+
+
+
+    getLastMessage(conversation){
+        let lastMessage='';
+       /* conversation.messages.map((m)=>{
+            if( m.isRead == 0 ){
+                lastMessage = m.content;
+            }
+        });*/
+
+        if (lastMessage == '') {
+
+
+            let maxDate = new Date( conversation.messages[0].createdAt ).getTime();
+            lastMessage = conversation.messages[0].content; 
+            conversation.messages.map((m)=>{
+
+
+                if( new Date(m.createdAt).getTime() > maxDate ){
+                    lastMessage = m.content;
+                    maxDate = new Date(m.createdAt).getTime();
+                }
+            });
+        }
+
+        return lastMessage;
+    }
+
+
+
+
+    getTimeElapsedSince(tmp): string {
+
+        let date = new Date(tmp);
+        
+        const now = new Date();
+        const elapsedMilliseconds = now.getTime() - date.getTime();
+        const elapsedSeconds = Math.floor(elapsedMilliseconds / 1000);
+        const elapsedMinutes = Math.floor(elapsedSeconds / 60);
+        const elapsedHours = Math.floor(elapsedMinutes / 60);
+        const elapsedDays = Math.floor(elapsedHours / 24);
+    
+        if (elapsedDays > 0) {
+            return `${elapsedDays}d`;
+        } else if (elapsedHours > 0) {
+            return `${elapsedHours}h`;
+        } else if (elapsedMinutes > 0) {
+            return `${elapsedMinutes}m`;
+        } else {
+            return `${elapsedSeconds}s`;
+        }
+    }
+    
 }

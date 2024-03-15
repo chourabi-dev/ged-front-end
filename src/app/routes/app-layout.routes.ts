@@ -18,9 +18,16 @@ export const APP_LAYOUT_ROUTES: Routes = [
  
     { path: 'reminders', loadChildren: () => import('../views/reminders/reminders.module').then(m => m.RemindersModule) },
  
+    { path: 'calendar', loadChildren: () => import('../views/calendar/calendar.module').then(m => m.CalendarModule) },
+ 
 
     { path: 'users', loadChildren: () => import('../views/users/users.module').then(m => m.UsersModule) },
  
+
+    { path: 'team', loadChildren: () => import('../pages/team/team.module').then(m => m.TeamModule) },
+ 
+
+
     { path: 'login-audits', loadChildren: () => import('../views/login-audit/login-audit.module').then(m => m.LoginAuditModule) },
  
     { path: 'settings', loadChildren: () => import('../views/settings/settings.module').then(m => m.SettingsModule) },

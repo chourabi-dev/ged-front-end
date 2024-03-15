@@ -20,6 +20,7 @@ import {
 import { PopoverDirective } from 'ngx-bootstrap/popover';
 import { GenerateUid } from '@app/shared/utils/GenerateUid';
 import { combineLatest } from 'rxjs';
+import { ApiService } from '@app/api.service';
 
 interface CalendarAppEvent extends CalendarEvent {
     description?: string
@@ -74,7 +75,7 @@ export class CalendarComponent implements OnInit, AfterViewInit {
     colorsSelection: string[] = []
     refresh: Subject<any> = new Subject();
     events: CalendarAppEvent[] = [
-        {
+        /*{
             id: 1,
             start: subDays(startOfDay(new Date()), 1),
             end: addDays(new Date(), 1),
@@ -116,29 +117,202 @@ export class CalendarComponent implements OnInit, AfterViewInit {
                 afterEnd: true,
             },
             draggable: true,
-        },
+        },*/
     ];
+
+
+    today = new Date();
+    index = 0;
+
+    loading:boolean = false;
+
+
 
     constructor(
         private modalService: BsModalService, 
         private formBuilder: FormBuilder,
-        private cdr: ChangeDetectorRef
+        private cdr: ChangeDetectorRef,
+        private api:ApiService
     ) { }
 
+
+
+    prevMonth(){
+        this.index--; 
+        const month =( this.today.getMonth()+ 1 + this.index );
+        const year = this.today.getFullYear();
+        this.initCalendar(month,year);
+    }
+
+
+    nextMonth(){
+        this.index++;
+
+        const month =( this.today.getMonth()+ 1 + this.index );
+        const year = this.today.getFullYear();
+        this.initCalendar(month,year);
+    }
+
     ngOnInit(): void {
+
+        
+        
         for (const key in colors) {
             if (Object.prototype.hasOwnProperty.call(colors, key)) {
                 this.colorsSelection.push(key)
             }
         }
-        this.formGroup = this.formBuilder.group({
-            id: [GenerateUid(10)],
-            title: ['', Validators.required],
-            start: [startOfDay(new Date()), Validators.required],
-            end: [endOfDay(new Date()), Validators.required],
-            color: [this.colorsSelection[0], Validators.required],
-            description: [''],
-        });
+      
+        
+
+        const month = this.today.getMonth()+1;
+        const year = this.today.getFullYear();
+        this.initCalendar(month,year);
+
+    }
+
+
+
+
+    initCalendar(month,year){
+
+        this.loading = true;
+
+        let tmpEventList = []; 
+
+        
+
+
+
+        this.api.getOneTimeReminder( month,year ).toPromise().then((res:any)=>{
+            
+
+            res.map((e)=>{
+                tmpEventList.push(
+                    {
+                        id: 2,
+                        start: startOfDay(new Date(e.start)),
+                        end: endOfDay(new Date(e.end)),
+                        title: e.title,
+                        color: colors.yellow,
+                        
+                    }
+                );
+            })
+
+            // now we get the second
+
+            this.api.yearlyreminder(month,year).toPromise().then((res:any)=>{
+                res.map((e)=>{
+                    tmpEventList.push(
+                        {
+                            id: 2,
+                            start: startOfDay(new Date(e.start)),
+                            end: endOfDay(new Date(e.end)),
+                            title: e.title,
+                            color: colors.yellow,
+                            
+                        }
+                    );
+                })  
+
+
+                this.api.halfyearlyreminder(month,year).toPromise().then((res:any)=>{
+                    res.map((e)=>{
+                        tmpEventList.push(
+                            {
+                                id: 2,
+                                start: startOfDay(new Date(e.start)),
+                                end: endOfDay(new Date(e.end)),
+                                title: e.title,
+                                color: colors.yellow,
+                                
+                            }
+                        );
+                    })  
+
+
+                    this.api.quarterlyreminder(month,year).toPromise().then((res:any)=>{
+                        res.map((e)=>{
+                            tmpEventList.push(
+                                {
+                                    id: 2,
+                                    start: startOfDay(new Date(e.start)),
+                                    end: endOfDay(new Date(e.end)),
+                                    title: e.title,
+                                    color: colors.yellow,
+                                    
+                                }
+                            );
+                        })  
+    
+    
+                        this.api.monthlyreminder(month,year).toPromise().then((res:any)=>{
+                            res.map((e)=>{
+                                tmpEventList.push(
+                                    {
+                                        id: 2,
+                                        start: startOfDay(new Date(e.start)),
+                                        end: endOfDay(new Date(e.end)),
+                                        title: e.title,
+                                        color: colors.yellow,
+                                        
+                                    }
+                                );
+                            })  
+        
+        
+                            this.api.weeklyreminder(month,year).toPromise().then((res:any)=>{
+                                res.map((e)=>{
+                                    tmpEventList.push(
+                                        {
+                                            id: 2,
+                                            start: startOfDay(new Date(e.start)),
+                                            end: endOfDay(new Date(e.end)),
+                                            title: e.title,
+                                            color: colors.yellow,
+                                            
+                                        }
+                                    );
+                                })  
+            
+            
+                                this.api.dailyreminder(month,year).toPromise().then((res:any)=>{
+                                    res.map((e)=>{
+                                        tmpEventList.push(
+                                            {
+                                                id: 2,
+                                                start: startOfDay(new Date(e.start)),
+                                                end: endOfDay(new Date(e.end)),
+                                                title: e.title,
+                                                color: colors.yellow,
+                                                
+                                                
+                                            }
+                                        );
+                                    })  
+                
+                
+                                    this.events = tmpEventList;
+                                    this.loading = false;
+                                    this.cdr.detectChanges();
+                                }) 
+                            }) 
+                        }) 
+    
+                    }) 
+
+ 
+    
+                }) 
+               
+            }) 
+
+        }).catch((err)=>{
+            
+        }).finally(()=>{
+            this.cdr.detectChanges();
+        })
     }
 
     ngAfterViewInit() {

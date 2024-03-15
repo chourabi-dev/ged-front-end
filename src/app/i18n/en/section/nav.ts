@@ -8,6 +8,10 @@ export const nav = {
         'CATEGORY': 'All categories',
         'SETTINGS':"Settings",
         'REMINDERS':'Reminders',
+        'CALENDAR':'Calendar',
+        'CHAT':'Chat',
+        'TEAM':'Team',
+
         'LANGUAGES':'Languages',
         'COMPANY_PROFILE':'Company profile',
         'SMTP':"SMTP",

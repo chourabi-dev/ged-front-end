@@ -721,5 +721,209 @@ export class ApiService {
         headers: headers
       }) 
   }
+
+  
+
+  addNewReminder(data){ 
+    const URL =environment.apiUrl+'/api/reminder';
+
+    const headers= new HttpHeaders()
+    .set('content-type', 'application/json')
+    .set('Authorization', 'Bearer '+localStorage.getItem('token'));
+
+      return this.http.post(URL,data,{
+        headers: headers
+      }) 
+  }
+
+
+
+  getReminderByID(id){
+    
+    const URL =environment.apiUrl+'/api/reminder/'+id;
+
+    const headers= new HttpHeaders()
+    .set('content-type', 'application/json')
+    .set('Authorization', 'Bearer '+localStorage.getItem('token'));
+
+      return this.http.get(URL,{
+        headers: headers
+      }) 
+  }
+
+
+  updateReminder(body,id){
+        
+    const URL =environment.apiUrl+'/api/reminder/'+id;
+
+    const headers= new HttpHeaders()
+    .set('content-type', 'application/json')
+    .set('Authorization', 'Bearer '+localStorage.getItem('token'));
+
+      return this.http.put(URL,body,{
+        headers: headers
+      }) 
+  }
+
+
+
+
+  getOneTimeReminder(month,year){
+    
+    const URL =environment.apiUrl+`/api/dashboard/onetimereminder/${month}/${year}`;
+
+    const headers= new HttpHeaders()
+    .set('content-type', 'application/json')
+    .set('Authorization', 'Bearer '+localStorage.getItem('token'));
+
+      return this.http.get(URL,{
+        headers: headers
+      }) 
+  }
+
+
+  
+  yearlyreminder(month,year){
+    
+    const URL =environment.apiUrl+`/api/dashboard/yearlyreminder/${month}/${year}`;
+
+    const headers= new HttpHeaders()
+    .set('content-type', 'application/json')
+    .set('Authorization', 'Bearer '+localStorage.getItem('token'));
+
+      return this.http.get(URL,{
+        headers: headers
+      }) 
+  }
+
+
+  halfyearlyreminder(month,year){
+    
+    const URL =environment.apiUrl+`/api/dashboard/halfyearlyreminder/${month}/${year}`;
+
+    const headers= new HttpHeaders()
+    .set('content-type', 'application/json')
+    .set('Authorization', 'Bearer '+localStorage.getItem('token'));
+
+      return this.http.get(URL,{
+        headers: headers
+      }) 
+  }
+
+
+  quarterlyreminder(month,year){
+    
+    const URL =environment.apiUrl+`/api/dashboard/quarterlyreminder/${month}/${year}`;
+
+    const headers= new HttpHeaders()
+    .set('content-type', 'application/json')
+    .set('Authorization', 'Bearer '+localStorage.getItem('token'));
+
+      return this.http.get(URL,{
+        headers: headers
+      }) 
+  }
+
+  monthlyreminder(month,year){
+    
+    const URL =environment.apiUrl+`/api/dashboard/monthlyreminder/${month}/${year}`;
+
+    const headers= new HttpHeaders()
+    .set('content-type', 'application/json')
+    .set('Authorization', 'Bearer '+localStorage.getItem('token'));
+
+      return this.http.get(URL,{
+        headers: headers
+      }) 
+  }
+
+
+  weeklyreminder(month,year){
+    
+    const URL =environment.apiUrl+`/api/dashboard/weeklyreminder/${month}/${year}`;
+
+    const headers= new HttpHeaders()
+    .set('content-type', 'application/json')
+    .set('Authorization', 'Bearer '+localStorage.getItem('token'));
+
+      return this.http.get(URL,{
+        headers: headers
+      }) 
+  }
+
+
+  dailyreminder(month,year){
+    
+    const URL =environment.apiUrl+`/api/dashboard/dailyreminder/${month}/${year}`;
+
+    const headers= new HttpHeaders()
+    .set('content-type', 'application/json')
+    .set('Authorization', 'Bearer '+localStorage.getItem('token'));
+
+      return this.http.get(URL,{
+        headers: headers
+      }) 
+  }
+
+ 
+
+  /***************** */
+
+  getListOfConversations(){
+    
+    const URL =environment.apiUrl+`/api/conversations`;
+
+    const headers= new HttpHeaders()
+    .set('content-type', 'application/json')
+    .set('Authorization', 'Bearer '+localStorage.getItem('token'));
+
+      return this.http.get(URL,{
+        headers: headers
+      }) 
+  }
+ 
+
+  sendMessage(uid,message,file=null){
+ 
+
+    let formData = new FormData();
+
+
+    
+    formData.append('content', message);
+    formData.append('receiver_id', uid); 
+    
+    if (file != null) {
+      formData.append('file', file);
+    }
+    
+    const URL =environment.apiUrl+`/api/message`;
+
+    const headers= new HttpHeaders() 
+    .set('Authorization', 'Bearer '+localStorage.getItem('token'));
+
+      return this.http.post(URL,formData,{
+        headers: headers
+      }) 
+
+  }
+
+
+
+  getMessagesByConversationID(id){
+    
+
+    const URL =environment.apiUrl+`/api/conversations/${id}/messages`;
+
+    const headers= new HttpHeaders()
+    .set('content-type', 'application/json')
+    .set('Authorization', 'Bearer '+localStorage.getItem('token'));
+
+      return this.http.get(URL,{
+        headers: headers
+      }) 
+  }
+
+
   
 }

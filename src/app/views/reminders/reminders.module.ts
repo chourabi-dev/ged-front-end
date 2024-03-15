@@ -9,6 +9,9 @@ import { TranslateModule } from '@ngx-translate/core';
 import { HttpClientModule } from '@angular/common/http';
 import { FrequencyPipe } from './frequency.pipe';
 import { AddComponent } from './add/add.component';
+import { CheckboxModule } from '@app/shared/components/checkbox/checkbox.module';
+import { NgSelectModule } from '@ng-select/ng-select';
+import { EditComponent } from './edit/edit.component';
  
 
 @NgModule({
@@ -16,7 +19,8 @@ import { AddComponent } from './add/add.component';
     RemindersComponent,
     ListComponent,
     FrequencyPipe,
-    AddComponent
+    AddComponent,
+    EditComponent
   ],
   imports: [
     CommonModule,
@@ -24,7 +28,9 @@ import { AddComponent } from './add/add.component';
     FormsModule,
     ReactiveFormsModule,
     TranslateModule,
-    HttpClientModule
+    HttpClientModule,
+    CheckboxModule,
+    NgSelectModule
   ]
 })
 export class RemindersModule { }

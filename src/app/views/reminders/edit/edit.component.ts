@@ -3,25 +3,28 @@
 
 
 
+import { DatePipe, formatDate } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ApiService } from '@app/api.service';
 
+
 @Component({
-  selector: 'app-add',
-  templateUrl: './add.component.html',
-  styleUrls: ['./add.component.css']
+  selector: 'app-edit',
+  templateUrl: './edit.component.html',
+  styleUrls: ['./edit.component.css']
 })
-export class AddComponent implements OnInit {
+export class EditComponent implements OnInit {
+
+  id;
 
   form = new FormGroup({
     subject: new FormControl('',Validators.required),
     message: new FormControl('',Validators.required),
     REPEATE_REMINDER: new FormControl(false,),
-    SEND_MAIL: new FormControl(false,),
-    SELECT_USERS : new FormControl(false),
+    SEND_MAIL: new FormControl(false), 
     usersIds : new FormControl([]),
     frequency: new FormControl(""), 
     multiple_days: new FormControl([]),
@@ -48,10 +51,10 @@ export class AddComponent implements OnInit {
 
 
     first_half_month: new FormControl('1'),
-    first_half_day:  new FormControl(15),
+    first_half_day:  new FormControl(0),
 
     second_half_month: new FormControl('7'),
-    second_half_day:  new FormControl(15),
+    second_half_day:  new FormControl(0),
     
   })
 
@@ -139,11 +142,111 @@ export class AddComponent implements OnInit {
   ]
 
 
-  constructor(private router:Router, private api:ApiService,private cdr: ChangeDetectorRef) { }
+  constructor(  private router:Router, private api:ApiService,private cdr: ChangeDetectorRef, private route:ActivatedRoute) { }
+
+
+
+
+
+
+  formatDate(date:string){
+    let d = new Date(date);
+
+    const res =  `${d.getFullYear()}-${ (d.getMonth()+1) < 10 ? ('0'+(d.getMonth()+1)) : (d.getMonth()+1)  }-${d.getDate()}T${d.getHours()}:${   d.getMinutes() < 10 ?( '0'+d.getMinutes()) : d.getMinutes()  }`;
+
+
+    console.log(res);
+    
+    return res;
+  }
+
+
+
+
 
   ngOnInit(): void {
+    this.id = this.route.snapshot.params['id'];
+
     this.api.getListOfUsers().toPromise().then((res:any)=>{
       this.users = res;
+    })
+
+
+
+
+    // fill up the form :o
+
+    this.api.getReminderByID(this.id).toPromise().then((res:any)=>{
+      console.log(res);
+
+      let reminderUsers = [];
+
+      res.reminderUsers.map((r)=>{
+        reminderUsers.push(r.userId)
+      })
+
+
+
+    
+      let multiple_days=[];
+      res.dailyReminders.map((d)=>{
+        multiple_days.push(d.dayOfWeek)
+      })
+
+
+
+    
+      // Format the Date object into a readable string
+      const REMINDER_DATE = this.formatDate(res.startDate);
+      const REMINDER_END_DATE = this.formatDate(res.endDate);
+      
+
+
+
+      this.form.setValue({
+        subject: res.subject,
+        message: res.message,
+        REPEATE_REMINDER: res.isRepeated == 1 ? true: false,
+        SEND_MAIL: res.isEmailNotification == 1 ? true : false, 
+        usersIds : reminderUsers,
+        frequency: res.frequency,
+        multiple_days: multiple_days,
+        weekly_day_choice : res.dayOfWeek,
+
+
+
+
+        REMINDER_DATE: REMINDER_DATE,
+        REMINDER_END_DATE : REMINDER_END_DATE,
+    
+    
+        first_quarter_month:  res.quarterlyReminders.length != 0 ? res.quarterlyReminders.filter(d=>d.quarter == 0)[0].month.toString(): null,
+        first_quarter_day:  res.quarterlyReminders.length != 0 ? res.quarterlyReminders.filter(d=>d.quarter == 0)[0].month.toString(): null,
+    
+    
+        second_quarter_month:  res.quarterlyReminders.length != 0 ? res.quarterlyReminders.filter(d=>d.quarter == 1)[0].month.toString(): null,
+        second_quarter_day:  res.quarterlyReminders.length != 0 ? res.quarterlyReminders.filter(d=>d.quarter == 1)[0].month.toString(): null,
+    
+    
+        third_quarter_month:  res.quarterlyReminders.length != 0 ? res.quarterlyReminders.filter(d=>d.quarter == 2)[0].month.toString(): null,
+        third_quarter_day:  res.quarterlyReminders.length != 0 ? res.quarterlyReminders.filter(d=>d.quarter == 2)[0].month.toString(): null,
+     
+    
+        forth_quarter_month:  res.quarterlyReminders.length != 0 ? res.quarterlyReminders.filter(d=>d.quarter == 3)[0].month.toString(): null,
+        forth_quarter_day:  res.quarterlyReminders.length != 0 ? res.quarterlyReminders.filter(d=>d.quarter == 3)[0].month.toString(): null,
+    
+
+
+
+    
+    
+        first_half_month: res.halfYearlyReminders.length != 0 ? res.halfYearlyReminders.filter(d=>d.quarter == 0)[0].month.toString(): null,
+        first_half_day: res.halfYearlyReminders.length != 0 ? res.halfYearlyReminders.filter(d=>d.quarter == 0)[0].day: null,
+    
+        second_half_month: res.halfYearlyReminders.length != 0 ?res.halfYearlyReminders.filter(d=>d.quarter == 1)[0].month.toString(): null,
+        second_half_day: res.halfYearlyReminders.length != 0 ? res.halfYearlyReminders.filter(d=>d.quarter == 1)[0].day: null,
+      })
+      
     })
   }
 
@@ -156,8 +259,7 @@ export class AddComponent implements OnInit {
     this.loading = true;
     this.error='';
     this.success='';
-
-  
+ 
 
 
 
@@ -183,11 +285,7 @@ export class AddComponent implements OnInit {
     body.multiple_days.map((day)=>{
       
       dailyReminders.push({
-        dayOfWeek: day.dayOfWeek,
-        name:  day.name,
-        isActive:true,
-        id:"",
-        reminderId:""
+        dayOfWeek: day
       })
     })
     
@@ -370,7 +468,7 @@ export class AddComponent implements OnInit {
 
     console.log(payload);
 
-    this.api.addNewReminder(payload).toPromise().then((res:any)=>{
+    this.api.updateReminder(payload,this.id).toPromise().then((res:any)=>{
       this.success='SERVER_SUCCESS';
 
     }).catch((err)=>{

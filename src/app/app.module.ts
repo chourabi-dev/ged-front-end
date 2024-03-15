@@ -36,6 +36,7 @@ import { NgxDocViewerModule } from 'ngx-doc-viewer';
         NgxsLoggerPluginModule.forRoot(),
         NgxDocViewerModule
         
+        
     ],
     providers: [
         {

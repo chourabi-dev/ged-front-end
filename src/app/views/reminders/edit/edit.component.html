@@ -4,7 +4,7 @@
 
         <div class="d-flex justify-content-end">
             <div>
-                <button class="btn btn-primary btn-sm mb-3" routerLink="/categories"> {{ 'Back'  | translate }}</button>
+                <button class="btn btn-primary btn-sm mb-3" routerLink="/reminders"> {{ 'Back'  | translate }}</button>
          
             </div>
         </div>
@@ -62,7 +62,7 @@
                         <div class="">  
 
                             <ng-select [multiple]="true"  formControlName="multiple_days"  class="w-100">
-                                <ng-option *ngFor="let day of days" [value]=" day "  >{{ day.name }}</ng-option> 
+                                <ng-option *ngFor="let day of days" [value]=" day.dayOfWeek "  >{{ day.name }}</ng-option> 
                                 
                             </ng-select>
                         </div>
@@ -232,7 +232,7 @@
 
 
             <div class="mb-3">
-               <button type="submit" class="btn btn-success" [disabled]="! form.valid" >{{ 'ADD' | translate }}</button>
+               <button type="submit" class="btn btn-success" [disabled]="! form.valid" >{{ 'UPDATE' | translate }}</button>
             </div>
 
             

@@ -78,6 +78,30 @@ const dashboard: NavMenu[] = [
         key: 'All users',
         submenu: []
     },
+    
+    {
+        path: '/team',
+        title: 'team',
+        translateKey: 'NAV.TEAM',
+        type: 'item',
+        iconType: 'feather',
+        icon: 'icon-users',
+        key: 'All team',
+        submenu: []
+    },
+
+    
+
+    {
+        path: '/apps/chat',
+        title: 'Chat',
+        translateKey: 'NAV.CHAT',
+        type: 'item',
+        iconType: 'feather',
+        icon: 'icon-send',
+        key: 'All users',
+        submenu: []
+    },
 
     {
         path: '/reminders',
@@ -87,6 +111,17 @@ const dashboard: NavMenu[] = [
         iconType: 'feather',
         icon: 'icon-clock',
         key: 'Reminders',
+        submenu: []
+    },
+
+    {
+        path: '/apps/calendar',
+        title: 'Calendar',
+        translateKey: 'NAV.CALENDAR',
+        type: 'item',
+        iconType: 'feather',
+        icon: 'icon-calendar',
+        key: 'Calendar',
         submenu: []
     },
 
